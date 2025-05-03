@@ -32,11 +32,11 @@
                   <a href="{% url 'disminuir_cantidad' item.id %}" class="btn btn-outline-danger btn-sm">−</a>
                   <a href="{% url 'aumentar_cantidad' item.id %}" class="btn btn-outline-success btn-sm">+</a>
                 {% else %}
-                  <a href="{% url 'disminuir_cantidad' item.producto_id %}" class="btn btn-outline-danger btn-sm">−</a>
-                  <a href="{% url 'aumentar_cantidad' item.producto_id %}" class="btn btn-outline-success btn-sm">+</a>
+                  <a href="{% url 'disminuir_cantidad' item.producto.id %}" class="btn btn-outline-danger btn-sm">−</a>
+                  <a href="{% url 'aumentar_cantidad' item.producto.id %}" class="btn btn-outline-success btn-sm">+</a>
                 {% endif %}
-
               </div>
+
 
               <span class="fw-bold text-dark">Total: ${{ item.cantidad|multiply:item.producto.precio }}</span>
             </div>
