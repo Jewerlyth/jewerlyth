@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os.path
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +25,7 @@ SECRET_KEY = 'django-insecure-(%)kt)p0d#f&3vo4tbc2@1amzutqaw9oxrw3!naj!*bzf!t8$q
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-ALLOWED_HOSTS = ['*']  # o simplemente: ['*'] durante pruebas
+ALLOWED_HOSTS = ['https://jewerlyth.onrender.com/']  # o simplemente: ['*'] durante pruebas
 
 
 
@@ -84,15 +85,14 @@ WSGI_APPLICATION = 'Jewerlythweb.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+
+
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'jewerlyth',
-        'USER': 'postgres',
-        'PASSWORD':'KDemon5149*',
-        'HOST': 'localhost',
-        'PORT': 5432,
-    }
+    'default': dj_database_url.config(default='postgresql://jewerlyth_user:y9VwD1QDToQkPdUug90paMSMs2xMDwc8@dpg-d0ar6m6uk2gs73c3j3ag-a.virginia-postgres.render.com/jewerlyth'),
+    'OPTIONS': {
+            'client_encoding': 'UTF8',  # Asegúrate de que este parámetro esté presente
+    },
 }
 
 
@@ -119,7 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'es-eu'
+LANGUAGE_CODE = 'es-mx'
 
 # settings.py
 TIME_ZONE = 'America/Mexico_City'  # O la zona horaria que corresponda a tu ubicación
@@ -127,8 +127,6 @@ USE_TZ = True  # Asegúrate de que el uso de zonas horarias esté habilitado
 
 
 USE_I18N = True
-
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
