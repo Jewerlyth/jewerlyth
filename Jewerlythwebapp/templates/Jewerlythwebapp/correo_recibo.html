@@ -1,0 +1,27 @@
+<h2>🧾 Recibo de Compra - Orden #{{ orden.id }}</h2>
+<p>Hola {{ usuario.username }}, gracias por tu compra. Aquí tienes los detalles de tu pedido:</p>
+
+<table style="width: 100%; border-collapse: collapse;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #ccc; padding: 8px;">Producto</th>
+      <th style="border: 1px solid #ccc; padding: 8px;">Precio</th>
+      <th style="border: 1px solid #ccc; padding: 8px;">Cantidad</th>
+      <th style="border: 1px solid #ccc; padding: 8px;">Subtotal</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for detalle in orden.detalles.all %}
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 8px;">{{ detalle.producto }}</td>
+      <td style="border: 1px solid #ccc; padding: 8px;">${{ detalle.precio_unitario }}</td>
+      <td style="border: 1px solid #ccc; padding: 8px;">{{ detalle.cantidad }}</td>
+      <td style="border: 1px solid #ccc; padding: 8px;">${{ detalle.subtotal }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<p style="margin-top: 20px;"><strong>Total:</strong> ${{ orden.total }}</p>
+
+<p>Esperamos verte pronto de nuevo.<br><strong>Jewerlyth</strong></p>

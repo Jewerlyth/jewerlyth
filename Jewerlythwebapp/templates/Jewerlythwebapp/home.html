@@ -1,0 +1,49 @@
+{% extends "Jewerlythwebapp/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+   <!-- Heading -->
+   <section class="page-section clearfix">
+      <div class="container">
+        <div class="row align-items-center gx-5">
+          <div class="col-lg-6 text-center mb-4 mb-lg-0">
+            <img class="img-fluid rounded shadow" src="{% static 'Jewerlythwebapp/img/ban.jpeg' %}" alt="Joyería de alta calidad">
+          </div>
+          <div class="col-lg-6">
+            <div class="intro-text bg-white p-5 rounded-4 shadow-lg text-center">
+              <h2 class="section-heading mb-4">
+                <span class="section-heading-upper text-warning">Calidad</span>
+                <span class="section-heading-lower display-5 fw-light texto-negro">La mejor joyería</span>
+              </h2>
+              <p class="lead">💎 "Descubre el brillo que te define con <strong>Jewerlyth</strong>, elegancia en cada detalle." 💎</p>
+              <a href="#catalogo" class="btn btn-warning mt-4 px-4 py-2 rounded-pill shadow-sm">Explorar catálogo</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+
+    <!-- Message -->
+    <section class="page-section cta">
+      <div class="container">
+        <div class="row">
+          <div class="col-xl-9 mx-auto">
+            <div class="cta-inner text-center rounded">
+              <h2 class="section-heading mb-4">
+                <span class="section-heading-upper">Elegancia y calidad</span>
+                <span class="section-heading-lower">Garantizadas</span>
+              </h2>
+              <p class="mb-0">Con años de experiencia en el mundo de la joyería, en Jewerlyth combinamos tradición y diseño moderno para ofrecerte piezas únicas, entregadas con puntualidad, seguridad y un compromiso total con tu satisfacción.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+{% endblock %}

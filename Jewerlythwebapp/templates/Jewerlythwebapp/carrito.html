@@ -1,0 +1,121 @@
+{% extends "Jewerlythwebapp/base.html" %}
+
+{% block content %}
+<h2 class="text-white text-center my-4">🛒 Carrito de Compras</h2>
+
+<div class="container">
+  {% if carrito %}
+    {% load mis_filtros %}
+
+    <!-- Mostrar productos de dos en dos -->
+    {% for item in carrito %}
+      {% if forloop.first or forloop.counter0|divisibleby:2 %}
+        <div class="row">
+      {% endif %}
+
+      <div class="col-12 col-md-6">
+        <div class="card product-card mb-4 shadow-sm p-4 d-flex flex-md-row align-items-center">
+          {% if item.producto.imagen %}
+            <div class="me-md-4 mb-3 mb-md-0 text-center">
+              <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.titulo }}" class="img-fluid rounded" style="max-width: 150px;">
+            </div>
+          {% endif %}
+
+          <div class="flex-fill">
+            <h5 class="card-title mb-2">{{ item.producto.titulo }}</h5>
+            <p class="card-subtitle mb-2 text-muted">Precio unitario: ${{ item.producto.precio }}</p>
+
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <div class="btn-group" role="group">
+                <a href="{% url 'disminuir_cantidad' item.id %}" class="btn btn-outline-danger btn-sm">−</a>
+                <span class="mx-2 fs-5">{{ item.cantidad }}</span>
+                <a href="{% url 'aumentar_cantidad' item.id %}" class="btn btn-outline-success btn-sm">+</a>
+              </div>
+
+              <span class="fw-bold text-dark">Total: ${{ item.cantidad|multiply:item.producto.precio }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% if forloop.counter|divisibleby:2 or forloop.last %}
+        </div>
+      {% endif %}
+    {% endfor %}
+
+    <!-- Tabla resumen -->
+    <div class="card bg-faded mt-4 p-4">
+      <h4 class="mb-3">Resumen de tu pedido</h4>
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Precio unitario</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in carrito %}
+          <tr>
+            <td>{{ item.producto.titulo }}</td>
+            <td>${{ item.producto.precio }}</td>
+            <td>{{ item.cantidad }}</td>
+            <td>${{ item.cantidad|multiply:item.producto.precio }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th colspan="3" class="text-end">Subtotal:</th>
+            <th>${{ carrito|calc_subtotal }}</th>
+          </tr>
+          <tr>
+            <th colspan="3" class="text-end">IVA (16%):</th>
+            <th>${{ carrito|calc_iva }}</th>
+          </tr>
+          <tr>
+            <th colspan="3" class="text-end">Costo de envío:</th>
+            <th>${{ carrito|calc_envio }}</th>
+          </tr>
+          <tr>
+            <th colspan="3" class="text-end">Total:</th>
+            <th>${{ carrito|calc_total }}</th>
+          </tr>
+        </tfoot>
+      </table>
+
+      <!-- Botón para confirmar compra -->
+      <button type="button" class="btn btn-warning btn-lg mt-3" data-bs-toggle="modal" data-bs-target="#confirmModal">
+        Finalizar Compra
+      </button>
+
+      <!-- Modal -->
+      <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+              <h5 class="modal-title" id="confirmModalLabel">¿Confirmar compra?</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <form method="get" action="{% url 'pago_simulado' %}">
+              <div class="modal-body">
+                <p>¿Deseas proceder al pago con el total de <strong>${{ carrito|calc_total }}</strong>?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-warning">Confirmar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  {% else %}
+    <div class="alert alert-warning text-center text-dark fw-bold" role="alert">
+      Tu carrito está vacío.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

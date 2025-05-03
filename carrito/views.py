@@ -1,0 +1,130 @@
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import ProductoJewe, Item,  Orden, DetalleOrden
+from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from decimal import Decimal
+from django.contrib import messages
+
+def agregar_al_carrito(request, producto_id):
+    producto = get_object_or_404(ProductoJewe, id=producto_id)
+    item, creado = Item.objects.get_or_create(user=request.user, producto=producto)
+    print("Agregado por:", request.user)
+
+    if not creado:
+        item.cantidad += 1
+        item.save()
+    return redirect('ver_carrito')
+
+def aumentar_cantidad(request, item_id):
+    item = get_object_or_404(Item, id=item_id, user=request.user)
+    item.cantidad += 1
+    item.save()
+    return redirect('ver_carrito')
+
+def disminuir_cantidad(request, item_id):
+    item = get_object_or_404(Item, id=item_id, user=request.user)
+    if item.cantidad > 1:
+        item.cantidad -= 1
+        item.save()
+    else:
+        item.delete()
+    return redirect('ver_carrito')
+
+@login_required
+def ver_carrito(request):
+    # Filtra los items del carrito para el usuario logueado
+    carrito = Item.objects.filter(user=request.user)
+
+    # Depurar: imprimir los items del carrito y el usuario
+    print("Usuario autenticado:", request.user)
+    print("Items en carrito:", list(carrito))  # Convierte el queryset a lista para imprimir
+    print("¿Está autenticado?", request.user.is_authenticated)
+    print("Visualiza carrito:", request.user)
+
+    # Pasar los items del carrito al template
+    return render(request, 'Jewerlythwebapp/carrito.html', {'carrito': carrito})
+
+def enviar_recibo_email(orden, correo):
+    asunto = f"Recibo de tu compra - Orden #{orden.id}"
+    destinatario = [correo]
+
+    cuerpo = render_to_string('Jewerlythwebapp/correo_recibo.html', {
+        'orden': orden,
+        'usuario': orden.usuario,  # Solo si deseas usar {{ usuario.username }}
+    })
+
+    email = EmailMessage(asunto, cuerpo, to=destinatario)
+    email.content_subtype = 'html'  # Para que se renderice el HTML
+    email.send()
+
+def recibir_correo(request):
+    if request.method == 'POST':
+        correo = request.POST.get('correo')
+        orden_id = request.POST.get('orden_id')
+
+        if correo and orden_id:
+            orden = Orden.objects.get(id=orden_id)
+            enviar_recibo_email(orden, correo)
+            return HttpResponse("Recibo enviado al correo proporcionado.")
+        else:
+            return HttpResponse("Faltan datos necesarios.", status=400)
+
+    return redirect('ver_carrito')
+
+@login_required
+def pago_simulado(request):
+    # Esta vista solo muestra el formulario de simulación de pago
+    return render(request, 'Jewerlythwebapp/pago_simulado.html')
+
+
+def pago_exitoso(request):
+    if request.method == 'POST':
+        carrito = Item.objects.filter(user=request.user)
+
+        if not carrito.exists():
+            return redirect('ver_carrito')
+
+        subtotal = sum(item.cantidad * item.producto.precio for item in carrito)
+        iva = subtotal * Decimal('0.16')  # 16% de IVA, ajusta según país
+        envio = Decimal('100.00')  # Envío fijo, puedes hacerlo dinámico si gustas
+        total = subtotal + iva + envio
+
+        orden = Orden.objects.create(
+            usuario=request.user,
+            fecha=timezone.now(),
+            subtotal=subtotal,
+            iva=iva,
+            envio=envio,
+            total=total
+        )
+
+        for item in carrito:
+            subtotal = item.producto.precio * item.cantidad  # Calcular subtotal
+            DetalleOrden.objects.create(
+                orden=orden,
+                producto=item.producto.titulo,
+                precio_unitario=item.producto.precio,
+                cantidad=item.cantidad,
+                subtotal=subtotal  # Usar el cálculo aquí
+            )
+
+        carrito.delete()
+
+        # Lógica del correo
+        if request.POST.get('enviar_correo'):
+            correo = request.POST.get('correo')
+            if correo:
+                enviar_recibo_email(orden, correo)
+                messages.success(request, '¡Correo de recibo de compra enviado exitosamente!')  # Agregar el mensaje de éxito
+
+        return render(request, 'Jewerlythwebapp/pago_exitoso.html', {'orden': orden})
+
+        # Si es GET, mostrar pantalla de simulación
+    return render(request, 'Jewerlythwebapp/pago_simulado.html')
+
+
+

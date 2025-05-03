@@ -1,0 +1,82 @@
+{% extends "Jewerlythwebapp/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card p-4">
+    <h2 class="mb-4">Simulación de Pago</h2>
+
+    <!-- Formulario principal -->
+    <form id="pagoForm" method="post" action="{% url 'pago_exitoso' %}">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="nombre" class="form-label">Nombre en la tarjeta</label>
+        <input type="text" class="form-control" id="nombre" name="nombre" required>
+      </div>
+      <div class="mb-3">
+        <label for="numero" class="form-label">Número de tarjeta</label>
+        <input type="text" class="form-control" id="numero" name="numero" placeholder="**** **** **** ****" required>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="expira" class="form-label">Fecha de expiración</label>
+          <input type="text" class="form-control" id="expira" name="expira" placeholder="MM/AA" required>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="cvv" class="form-label">CVV</label>
+          <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123" required>
+        </div>
+      </div>
+
+      <!-- Botón que abre el modal -->
+      <button type="button" class="btn btn-success btn-lg w-100 mt-3" data-bs-toggle="modal" data-bs-target="#confirmModal">
+        Pagar
+      </button>
+
+      <!-- Modal de confirmación -->
+      <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+              <h5 class="modal-title" id="confirmModalLabel">¿Confirmar compra?</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body">
+              <p>¿Deseas proceder con el pago <strong>con tarjeta</strong>?</p>
+
+              <!-- Checkbox -->
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="correoCheckbox" name="enviar_correo" onclick="toggleEmailInput()">
+                <label class="form-check-label" for="correoCheckbox">
+                  Deseo recibir el recibo por correo electrónico
+                </label>
+              </div>
+
+              <!-- Campo de correo -->
+              <div id="correoInputContainer" style="display: none;">
+                <label for="correoInput" class="form-label">Correo electrónico:</label>
+                <input type="email" class="form-control" name="correo" id="correoInput" placeholder="tucorreo@ejemplo.com">
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-warning">Confirmar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Script para mostrar/ocultar campo de correo -->
+    <script>
+      function toggleEmailInput() {
+        const checkbox = document.getElementById('correoCheckbox');
+        const emailInput = document.getElementById('correoInputContainer');
+        emailInput.style.display = checkbox.checked ? 'block' : 'none';
+      }
+    </script>
+
+  </div>
+</div>
+{% endblock %}

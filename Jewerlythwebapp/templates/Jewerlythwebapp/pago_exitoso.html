@@ -1,0 +1,70 @@
+{% extends "Jewerlythwebapp/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="alert alert-success text-center">
+    <h4>✅ ¡Pago realizado con éxito!</h4>
+      <p>Gracias por tu compra{% if user.is_authenticated %}, {{ user.username }}{% endif %}.</p>
+    <p>Tu orden #{{ orden.id }} ha sido procesado exitosamente.</p>
+    <p>Gracias por tu compra.</p>
+  </div>
+  {% if messages %}
+      <div class="alert alert-success">
+          {% for message in messages %}
+              <p>{{ message }}</p>
+          {% endfor %}
+      </div>
+  {% endif %}
+
+
+  <div class="card p-4 mt-4">
+    <h5>🧾 Recibo de compra - Orden #{{ orden.id }}</h5>
+    <p><strong>Fecha:</strong> {{ orden.fecha }}</p>
+    <table class="table mt-3">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Precio Unitario</th>
+          <th>Cantidad</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for detalle in orden.detalles.all %}
+        <tr>
+          <td>{{ detalle.producto }}</td>
+          <td>${{ detalle.precio_unitario }}</td>
+          <td>{{ detalle.cantidad }}</td>
+          <td>${{ detalle.subtotal }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="3" class="text-end">Subtotal:</th>
+          <th>${{ orden.subtotal }}</th>
+        </tr>
+        <tr>
+          <th colspan="3" class="text-end">IVA (16%):</th>
+          <th>${{ orden.iva }}</th>
+        </tr>
+        <tr>
+          <th colspan="3" class="text-end">Costo de envío:</th>
+          <th>${{ orden.envio }}</th>
+        </tr>
+        <tr>
+          <th colspan="3" class="text-end">Total:</th>
+          <th>${{ orden.total }}</th>
+        </tr>
+      </tfoot>
+
+    </table>
+    <div class="text-end">
+      <a href="{% url 'Home' %}" class="btn btn-outline-primary mt-3">Volver al inicio</a>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,279 @@
+{% extends "Jewerlythwebapp/base.html" %}
+{% block content %}
+<div class="container my-5">
+  <h2 class="text-center mb-4">📩 Soporte al Cliente</h2>
+
+  {% if enviado %}
+    <div class="alert alert-success text-center">
+      ¡Tu mensaje fue enviado exitosamente! Pronto nos pondremos en contacto contigo.
+    </div>
+  {% endif %}
+
+  <div class="row">
+    <div class="col-md-6">
+      <h4>¿Tienes dudas o quejas?</h4>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-warning mt-2">Enviar mensaje</button>
+      </form>
+    </div>
+
+    <div class="col-md-6">
+      <h4>❓ Preguntas Frecuentes</h4>
+      <div class="accordion" id="faqAccordion">
+
+        <!-- Sobre los productos -->
+        <h5 class="mt-3">🛍️ Sobre los productos</h5>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq1">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+              ¿Qué materiales usan para las joyas? ¿Son hipoalergénicos?
+            </button>
+          </h2>
+          <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Utilizamos materiales de alta calidad como oro de 14k y 18k, plata 925, acero inoxidable y baños de oro. Muchas de nuestras piezas son hipoalergénicas.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq2">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+              ¿Las joyas son de oro macizo, baño de oro o chapadas?
+            </button>
+          </h2>
+          <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Tenemos opciones en oro macizo, baño de oro de alta duración y chapadas. En la descripción de cada producto se especifica el tipo de material.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq3">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+              ¿Tienen tallas disponibles para anillos/pulseras?
+            </button>
+          </h2>
+          <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Sí, ofrecemos varias tallas. En cada producto encontrarás una guía para elegir la talla correcta. Si tienes dudas, puedes contactarnos.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq4">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+              ¿Puedo personalizar una joya?
+            </button>
+          </h2>
+          <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Sí, ofrecemos servicio de personalización en algunas piezas. Consulta la sección de joyas personalizadas o escríbenos.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq5">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5">
+              ¿Tienen certificado de autenticidad para piedras preciosas?
+            </button>
+          </h2>
+          <div id="collapse5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Sí, todas nuestras piedras preciosas auténticas incluyen su certificado de autenticidad.
+            </div>
+          </div>
+        </div>
+
+        <!-- Sobre pedidos y envíos -->
+        <h5 class="mt-4">📦 Sobre pedidos y envíos</h5>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq6">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse6">
+              ¿Cuánto tarda en llegar mi pedido?
+            </button>
+          </h2>
+          <div id="collapse6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Se procesan en 1-2 días hábiles y llegan en 3 a 7 días según tu ubicación.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq7">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse7">
+              ¿Ofrecen envío internacional?
+            </button>
+          </h2>
+          <div id="collapse7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Sí, enviamos a varios países. Los costos y tiempos se calculan en el checkout.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq8">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse8">
+              ¿Puedo hacer seguimiento de mi pedido?
+            </button>
+          </h2>
+          <div id="collapse8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Claro, te enviaremos un número de seguimiento por correo electrónico.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq9">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse9">
+              ¿Cuál es el costo del envío?
+            </button>
+          </h2>
+          <div id="collapse9" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Depende del destino y valor de la compra. Envío gratuito en compras superiores a [X monto] dentro de [país/localidad].
+            </div>
+          </div>
+        </div>
+
+        <!-- Cambios y devoluciones -->
+        <h5 class="mt-4">🔄 Cambios y devoluciones</h5>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq10">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse10">
+              ¿Puedo devolver una joya si no me queda o no me gusta?
+            </button>
+          </h2>
+          <div id="collapse10" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Sí, dentro de los primeros 15 días tras recibir el pedido y si está sin uso.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq11">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse11">
+              ¿Qué pasa si mi joya llega dañada?
+            </button>
+          </h2>
+          <div id="collapse11" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Contáctanos dentro de las 48 horas con fotos y te ayudaremos a solucionarlo.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq12">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse12">
+              ¿Cuánto tiempo tengo para hacer una devolución o cambio?
+            </button>
+          </h2>
+          <div id="collapse12" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Tienes hasta 15 días desde la entrega.
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagos -->
+        <h5 class="mt-4">💳 Pagos</h5>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq13">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse13">
+              ¿Qué métodos de pago aceptan?
+            </button>
+          </h2>
+          <div id="collapse13" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Tarjetas de crédito/débito, PayPal, transferencias bancarias y métodos locales.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq14">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse14">
+              ¿Es seguro comprar en su sitio web?
+            </button>
+          </h2>
+          <div id="collapse14" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Sí, usamos certificados SSL y plataformas seguras de pago.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq15">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse15">
+              ¿Puedo pagar en cuotas?
+            </button>
+          </h2>
+          <div id="collapse15" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Sí, ofrecemos pagos en cuotas sin interés con tarjetas participantes.
+            </div>
+          </div>
+        </div>
+
+        <!-- Garantía y mantenimiento -->
+        <h5 class="mt-4">🛠️ Mantenimiento y garantía</h5>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq16">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse16">
+              ¿Las joyas tienen garantía? ¿Qué cubre?
+            </button>
+          </h2>
+          <div id="collapse16" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Sí, 3 meses contra defectos de fabricación. No cubre mal uso o desgaste natural.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq17">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse17">
+              ¿Cómo cuido o limpio mis joyas?
+            </button>
+          </h2>
+          <div id="collapse17" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Evita perfumes, agua salada o químicos. Límpialas con paño suave y guárdalas en un estuche seco.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="faq18">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse18">
+              ¿Ofrecen servicio de reparación o ajuste?
+            </button>
+          </h2>
+          <div id="collapse18" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              Sí, envíanos una foto y te cotizamos la reparación o ajuste.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

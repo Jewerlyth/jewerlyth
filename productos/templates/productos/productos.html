@@ -1,0 +1,56 @@
+{% extends "Jewerlythwebapp/base.html" %}
+
+{% load static %}
+{% load mis_filtros %}
+
+{% block content %}
+<section class="page-section">
+  <div class="container">
+    <div class="row">
+      {% for productojewe in productosjewe %}
+        <div class="col-md-6 mb-4 d-flex">
+          <div class="card product-card w-100">
+            <div class="row g-0">
+              <div class="col-md-5 text-center">
+                <img src="{{ productojewe.imagen.url }}" class="img-fluid rounded-start p-3" alt="{{ productojewe.titulo }}">
+              </div>
+              <div class="col-md-7 d-flex align-items-center">
+                <div class="card-body">
+                  <h5 class="card-title section-heading-lower mb-2">{{ productojewe.titulo }}</h5>
+                  <h6 class="card-subtitle section-heading-upper mb-3 text-muted">{{ productojewe.categoria_prod }}</h6>
+                  <p class="card-text section-heading-under">Precio: ${{ productojewe.precio }}</p>
+
+                  {% with carrito|get_item:productojewe.id as item %}
+                    {% if item %}
+                      <p>Cantidad en carrito: {{ item.cantidad }}</p>
+                      <a href="{% url 'aumentar_cantidad' item.id %}" class="btn btn-sm btn-success">+</a>
+                      <a href="{% url 'disminuir_cantidad' item.id %}" class="btn btn-sm btn-danger">-</a>
+                    {% else %}
+                      <form method="POST" action="{% url 'agregar_al_carrito' productojewe.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning mt-2">Agregar al carrito</button>
+                      </form>
+                    {% endif %}
+                  {% endwith %}
+
+                  <p class="card-text"><small class="text-muted">Elegancia y calidad garantizadas</small></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section>
+  <div style="width: 75%; margin: auto; text-align: center; color: yellow;">
+    Categorías:
+    {% for categoria in categorias %}
+      <a href="{% url 'categoria' categoria.id %}">{{ categoria.nombre }}</a> &nbsp;&nbsp;&nbsp;
+    {% endfor %}
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "Jewerlythwebapp/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+    {% for productojewe in productosjewe %}
+<section class="page-section">
+  <div class="container">
+    <div class="card product-card mb-4 mx-auto" style="max-width: 800px;">
+      <div class="row g-0">
+        <div class="col-md-5 text-center">
+          <img src="{{ productojewe.imagen.url }}" class="img-fluid rounded-start p-3" alt="{{ productojewe.titulo }}">
+        </div>
+        <div class="col-md-7 d-flex align-items-center">
+          <div class="card-body">
+            <h5 class="card-title section-heading-lower mb-2">{{ productojewe.titulo }}</h5>
+            <h6 class="card-subtitle section-heading-upper mb-3 text-muted">{{ productojewe.categoria_prod }}</h6>
+            <p class="card-text section-heading-under">Precio: ${{ productojewe.precio }}</p>
+            <p class="card-text"><small class="text-muted">Elegancia y calidad garantizadas</small></p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+    {% endfor %}
+
+  <section>
+  <div style="width: 75%; margin: auto; text-align: center; color: yellow;">
+       Categoría seleccionada: {{ categoria.nombre }}
+  </div>
+</section>
+
+
+{% endblock %}
