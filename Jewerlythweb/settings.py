@@ -93,7 +93,7 @@ WSGI_APPLICATION = 'Jewerlythweb.wsgi.application'
 
 
 DATABASES = {
-    'default': dj_database_url.config(default='postgresql://jewerlyth_user:y9VwD1QDToQkPdUug90paMSMs2xMDwc8@dpg-d0ar6m6uk2gs73c3j3ag-a.virginia-postgres.render.com/jewerlyth'),
+    'default':  dj_database_url.config(default=os.environ.get('postgresql://jewerlyth_user:y9VwD1QDToQkPdUug90paMSMs2xMDwc8@dpg-d0ar6m6uk2gs73c3j3ag-a.virginia-postgres.render.com/jewerlyth')),
     'OPTIONS': {
             'client_encoding': 'UTF8',  # Asegúrate de que este parámetro esté presente
     },

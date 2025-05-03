@@ -33,9 +33,21 @@
                         </form>
                       {% endif %}
                     {% endwith %}
-                  <!--{% else %}
-                    <p><a href="{% url 'login' %}">Inicia sesión</a> para agregar productos al carrito.</p>
-                  {% endif %}-->
+                  {% else %}
+                    {% comment %} Si el usuario no está autenticado, lo almacenamos en la sesión {% endcomment %}
+                    {% with carrito|get_item:productojewe.id as item %}
+                      {% if item %}
+                        <p>Cantidad en carrito: {{ item.cantidad }}</p>
+                        <a href="{% url 'aumentar_cantidad' productojewe.id %}" class="btn btn-sm btn-success">+</a>
+                        <a href="{% url 'disminuir_cantidad' productojewe.id %}" class="btn btn-sm btn-danger">-</a>
+                      {% else %}
+                        <form method="POST" action="{% url 'agregar_al_carrito' productojewe.id %}">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-warning mt-2">Agregar al carrito</button>
+                        </form>
+                      {% endif %}
+                    {% endwith %}
+                  {% endif %}
 
                   <p class="card-text"><small class="text-muted">Elegancia y calidad garantizadas</small></p>
                 </div>

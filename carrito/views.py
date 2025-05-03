@@ -9,15 +9,46 @@ from django.http import HttpResponse
 from decimal import Decimal
 from django.contrib import messages
 
+#def agregar_al_carrito(request, producto_id):
+ #   producto = get_object_or_404(ProductoJewe, id=producto_id)
+  #  item, creado = Item.objects.get_or_create(user=request.user, producto=producto)
+  #  print("Agregado por:", request.user)
+
+  #  if not creado:
+   #     item.cantidad += 1
+   #     item.save()
+   # return redirect('ver_carrito')
+
 def agregar_al_carrito(request, producto_id):
     producto = get_object_or_404(ProductoJewe, id=producto_id)
-    item, creado = Item.objects.get_or_create(user=request.user, producto=producto)
-    print("Agregado por:", request.user)
 
-    if not creado:
-        item.cantidad += 1
-        item.save()
+    # Si el usuario está autenticado, se guarda en la base de datos
+    if request.user.is_authenticated:
+        item, creado = Item.objects.get_or_create(user=request.user, producto=producto)
+        print("Agregado por:", request.user)
+
+        if not creado:
+            item.cantidad += 1
+            item.save()
+    else:
+        # Si el usuario no está autenticado, se guarda el producto en la sesión
+        carrito = request.session.get('carrito', [])
+
+        # Verificamos si el producto ya está en el carrito
+        producto_en_carrito = next((item for item in carrito if item['producto_id'] == producto.id), None)
+
+        if producto_en_carrito:
+            # Si el producto ya está en el carrito, incrementamos la cantidad
+            producto_en_carrito['cantidad'] += 1
+        else:
+            # Si no está, lo agregamos al carrito
+            carrito.append({'producto_id': producto.id, 'cantidad': 1})
+
+        # Guardamos el carrito actualizado en la sesión
+        request.session['carrito'] = carrito
+
     return redirect('ver_carrito')
+
 
 def aumentar_cantidad(request, item_id):
     item = get_object_or_404(Item, id=item_id, user=request.user)
@@ -34,7 +65,7 @@ def disminuir_cantidad(request, item_id):
         item.delete()
     return redirect('ver_carrito')
 
-@login_required
+#@login_required
 def ver_carrito(request):
     # Filtra los items del carrito para el usuario logueado
     carrito = Item.objects.filter(user=request.user)
@@ -75,7 +106,7 @@ def recibir_correo(request):
 
     return redirect('ver_carrito')
 
-@login_required
+#@login_required
 def pago_simulado(request):
     # Esta vista solo muestra el formulario de simulación de pago
     return render(request, 'Jewerlythwebapp/pago_simulado.html')
