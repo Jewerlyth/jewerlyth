@@ -7,7 +7,7 @@ body {
   color: #f4f4f4;
 }
 .logo-header {
-  width: 160px; /* Ajusta el tamaño del logo según sea necesario */
+  width: 180px; /* Ajusta el tamaño del logo según sea necesario */
   height: auto; /* Mantiene la proporción de la imagen */
   margin-right: 10px; /* Espacio entre el logo y el nombre */
   vertical-align: middle; /* Alinea verticalmente la imagen con el texto */
