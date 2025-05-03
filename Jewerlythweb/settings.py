@@ -147,3 +147,8 @@ MEDIA_ROOT=os.path.join(BASE_DIR, 'Media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Asegúrate de tener esto:
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'Jewerlythwebapp/static'),
+]
