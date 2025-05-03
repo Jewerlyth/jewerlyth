@@ -12,24 +12,32 @@ def multiply(value, arg):
 
 @register.filter
 def get_item(carrito, producto_id):
-    return next((item for item in carrito if item.producto.id == producto_id), None)
+    return next((item for item in carrito if getattr(item, 'producto', {}).id == producto_id), None)
 
 @register.filter
 def calc_subtotal(carrito):
-    return sum(Decimal(item.cantidad) * Decimal(item.producto.precio) for item in carrito)
+    total = Decimal(0)
+    for item in carrito:
+        try:
+            cantidad = item.cantidad if hasattr(item, 'cantidad') else item.get('cantidad', 0)
+            precio = item.producto.precio if hasattr(item, 'producto') else item.get('precio', 0)
+            total += Decimal(cantidad) * Decimal(precio)
+        except Exception:
+            continue
+    return total
 
 @register.filter
 def calc_iva(carrito):
-    subtotal = sum(Decimal(item.cantidad) * Decimal(item.producto.precio) for item in carrito)
+    subtotal = calc_subtotal(carrito)
     return round(subtotal * Decimal(0.16), 2)
 
 @register.filter
 def calc_envio(carrito):
-    return Decimal(100.00)  # Por ejemplo, un costo fijo
+    return Decimal(100.00)
 
 @register.filter
 def calc_total(carrito):
-    subtotal = sum(Decimal(item.cantidad) * Decimal(item.producto.precio) for item in carrito)
+    subtotal = calc_subtotal(carrito)
     iva = subtotal * Decimal(0.16)
-    envio = Decimal(100.00)  # O puedes hacer dinámico si lo deseas
+    envio = Decimal(100.00)
     return round(subtotal + iva + envio, 2)
