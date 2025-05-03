@@ -146,7 +146,7 @@ def pago_exitoso(request):
             carrito_data = request.session.get('carrito', [])
             carrito = [
                 {
-                    'producto': Producto.objects.get(id=item['producto_id']),
+                    'producto': ProductoJewe.objects.get(id=item['producto_id']),
                     'cantidad': item['cantidad']
                 }
                 for item in carrito_data
