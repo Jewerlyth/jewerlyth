@@ -25,8 +25,12 @@ SECRET_KEY = 'django-insecure-(%)kt)p0d#f&3vo4tbc2@1amzutqaw9oxrw3!naj!*bzf!t8$q
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-ALLOWED_HOSTS = ['https://jewerlyth.onrender.com/']  # o simplemente: ['*'] durante pruebas
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS = [RENDER_EXTERNAL_HOSTNAME]
+else:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
