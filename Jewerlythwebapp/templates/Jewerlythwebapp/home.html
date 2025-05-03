@@ -3,13 +3,12 @@
 {% load static %}
 
 {% block content %}
-
    <!-- Heading -->
    <section class="page-section clearfix">
       <div class="container">
         <div class="row align-items-center gx-5">
           <div class="col-lg-6 text-center mb-4 mb-lg-0">
-            <img class="img-fluid rounded shadow" src="{% static 'Jewerlythwebapp/img/ban.jpeg' %}" alt="Joyería de alta calidad">
+            <img class="img-fluid rounded shadow" src="{% static 'Jewerlythweb/Jewerlythwebapp/static/Jewerlythwebapp/img/logoj.png' %}" alt="Joyería de alta calidad">
           </div>
           <div class="col-lg-6">
             <div class="intro-text bg-white p-5 rounded-4 shadow-lg text-center">
@@ -18,7 +17,8 @@
                 <span class="section-heading-lower display-5 fw-light texto-negro">La mejor joyería</span>
               </h2>
               <p class="lead">💎 "Descubre el brillo que te define con <strong>Jewerlyth</strong>, elegancia en cada detalle." 💎</p>
-              <a href="#catalogo" class="btn btn-warning mt-4 px-4 py-2 rounded-pill shadow-sm">Explorar catálogo</a>
+              <a href="{% url 'Productos' %}" class="btn btn-warning mt-4 px-4 py-2 rounded-pill shadow-sm">Explorar catálogo</a>
+
             </div>
           </div>
         </div>

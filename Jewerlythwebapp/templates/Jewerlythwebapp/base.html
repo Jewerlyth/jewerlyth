@@ -65,6 +65,150 @@
 
 
 
+    <!-- Botón flotante -->
+    <button id="chat-toggle" onclick="toggleChat()">💬</button>
+
+    <!-- Contenedor del chatbot -->
+    <div id="chat-container">
+        <div id="chat-header">CHATBOT JEWERLYTH</div>
+        <div id="chatbox"></div>
+        <div id="buttons">
+            <button class="chat-button" onclick="sendMessage('Hola')">👋 Hola</button>
+            <button class="chat-button" onclick="sendMessage('¿Qué joyas tienen?')">💍 Ver joyas</button>
+            <button class="chat-button" onclick="sendMessage('¿Cuál es el precio?')">💰 Precios</button>
+            <button class="chat-button" onclick="sendMessage('¿Cuáles son sus horarios?')">⏰ Horarios</button>
+            <button class="chat-button" onclick="sendMessage('Información sobre envíos')">📦 Envíos</button>
+            <button class="chat-button" onclick="sendMessage('Necesito ayuda con correos')">📨 Ayuda</button>
+            <button class="chat-button" onclick="sendMessage('Gracias')">🙏 Gracias</button>
+        </div>
+    </div>
+
+    <!-- Anuncio tipo popup -->
+    <div id="popup-anuncio-full">
+        <div class="cerrar-popup" onclick="cerrarPopup()">✖</div>
+        <img src="https://wallpapercave.com/wp/wp2689088.jpg" alt="Día de las Madres" id="imagen-anuncio">
+        <h2>🌸 ¡Feliz Día de las Madres! 🌸</h2>
+        <p>✨ Haz que este día sea inolvidable con nuestras joyas exclusivas para mamá.</p>
+    </div>
+
+    <!-- Banners -->
+    <div id="banners">
+        <div class="banner"> ¡Haz brillar tus momentos especiales!</div>
+        <div class="banner">💍 Compra 2 piezas y llévate la 3ª a mitad de precio.</div>
+    </div>
+
+      <!-- Anuncio deslizante -->
+<div id="slider-announcement">
+  <img src="https://th.bing.com/th/id/R.a9576699ddaf9192095a3d9fe0ba69cc?rik=R8EfEwpX5Arn5w&pid=ImgRaw&r=0" alt="Oferta" class="imagen-slider">
+  <div class="texto-slider">
+    <p>🎁 ¡Aprovecha nuestras promociones exclusivas por tiempo limitado.</p>
+  </div>
+
+</div>
+    <script>
+        // Alternar visibilidad del chat al hacer clic en el botón
+        document.getElementById('chat-toggle').addEventListener('click', function () {
+            const chat = document.getElementById('chat-container');
+            if (chat.style.display === 'none' || chat.style.display === '') {
+                chat.style.display = 'flex';
+            } else {
+                chat.style.display = 'none';
+            }
+        });
+
+        function sendMessage(message) {
+            const chatbox = document.getElementById("chatbox");
+
+            const userMsg = document.createElement("div");
+            userMsg.className = "message user-message";
+            userMsg.textContent = message;
+            chatbox.appendChild(userMsg);
+
+            fetch("/chatbot/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: message })
+            })
+            .then(res => res.json())
+            .then(data => {
+                const botMsg = document.createElement("div");
+                botMsg.className = "message bot-message";
+                botMsg.textContent = data.response;
+                chatbox.appendChild(botMsg);
+                chatbox.scrollTop = chatbox.scrollHeight;
+            });
+        }
+
+        // Mostrar popup cada 8 minutos, iniciando a los 10 segundos
+        function mostrarPopup() {
+            const popup = document.getElementById("popup-anuncio-full");
+            if (popup.style.display !== "flex") {
+                popup.style.display = "flex";
+            }
+        }
+
+        function cerrarPopup() {
+            document.getElementById("popup-anuncio-full").style.display = "none";
+        }
+
+        // Mostrar popup y banners después de ciertos tiempos
+        window.addEventListener("load", function () {
+            setTimeout(() => {
+                mostrarPopup(); // Mostrar popup después de 10 segundos
+            }, 10000);
+
+            setInterval(() => {
+                mostrarPopup(); // Mostrar popup cada 8 minutos
+            }, 480000);
+
+            // Mostrar banners
+            setTimeout(() => {
+                mostrarBanners(); // Mostrar banners después de 10 segundos
+            }, 10000);
+
+            setInterval(() => {
+                mostrarBanners(); // Mostrar banners cada 2 minutos
+            }, 120000);
+        });
+
+        function mostrarBanners() {
+            const banners = document.getElementById("banners");
+            banners.style.display = "flex";
+            setTimeout(() => {
+                banners.style.display = "none";
+            }, 10000);
+        }
+
+        function mostrarSlider() {
+            const slider = document.getElementById("slider-announcement");
+            slider.classList.add("show");
+        }
+
+        function cerrarSlider() {
+            const slider = document.getElementById("slider-announcement");
+            slider.classList.remove("show");
+        }
+
+        window.addEventListener("load", function () {
+            setTimeout(() => {
+                mostrarSlider();
+            }, 10000);
+
+            setTimeout(() => {
+                cerrarSlider();
+            }, 20000);
+
+            setInterval(() => {
+                mostrarSlider();
+                setTimeout(() => {
+                    cerrarSlider();
+                }, 10000);
+            }, 120000);
+        });
+    </script>
+
+
+
 
     <!-- Footer -->
     <footer class="footer text-faded text-center py-5">

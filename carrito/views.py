@@ -51,33 +51,47 @@ def agregar_al_carrito(request, producto_id):
 
 
 def aumentar_cantidad(request, item_id):
-    item = get_object_or_404(Item, id=item_id, user=request.user)
-    item.cantidad += 1
-    item.save()
-    return redirect('ver_carrito')
-
-def disminuir_cantidad(request, item_id):
-    item = get_object_or_404(Item, id=item_id, user=request.user)
-    if item.cantidad > 1:
-        item.cantidad -= 1
+    if request.user.is_authenticated:
+        item = get_object_or_404(Item, id=item_id, user=request.user)
+        item.cantidad += 1
         item.save()
     else:
-        item.delete()
+        carrito = request.session.get('carrito', {})
+        if item_id in carrito:
+            carrito[item_id]['cantidad'] += 1
+            request.session['carrito'] = carrito
     return redirect('ver_carrito')
+
+
+def disminuir_cantidad(request, item_id):
+    if request.user.is_authenticated:
+        item = get_object_or_404(Item, id=item_id, user=request.user)
+        if item.cantidad > 1:
+            item.cantidad -= 1
+            item.save()
+        else:
+            item.delete()
+    else:
+        carrito = request.session.get('carrito', {})
+        if item_id in carrito:
+            if carrito[item_id]['cantidad'] > 1:
+                carrito[item_id]['cantidad'] -= 1
+                request.session['carrito'] = carrito
+            else:
+                del carrito[item_id]
+                request.session['carrito'] = carrito
+    return redirect('ver_carrito')
+
 
 #@login_required
 def ver_carrito(request):
-    # Filtra los items del carrito para el usuario logueado
-    carrito = Item.objects.filter(user=request.user)
+    if request.user.is_authenticated:
+        carrito = Item.objects.filter(user=request.user)
+    else:
+        carrito = request.session.get('carrito', {}).values()
 
-    # Depurar: imprimir los items del carrito y el usuario
-    print("Usuario autenticado:", request.user)
-    print("Items en carrito:", list(carrito))  # Convierte el queryset a lista para imprimir
-    print("¿Está autenticado?", request.user.is_authenticated)
-    print("Visualiza carrito:", request.user)
-
-    # Pasar los items del carrito al template
     return render(request, 'Jewerlythwebapp/carrito.html', {'carrito': carrito})
+
 
 def enviar_recibo_email(orden, correo):
     asunto = f"Recibo de tu compra - Orden #{orden.id}"
@@ -114,18 +128,28 @@ def pago_simulado(request):
 
 def pago_exitoso(request):
     if request.method == 'POST':
-        carrito = Item.objects.filter(user=request.user)
+        if request.user.is_authenticated:
+            carrito = Item.objects.filter(user=request.user)
+        else:
+            carrito_data = request.session.get('carrito', {})
+            carrito = [
+                {
+                    'producto': Producto.objects.get(id=producto_id),
+                    'cantidad': data['cantidad']
+                }
+                for producto_id, data in carrito_data.items()
+            ]
 
-        if not carrito.exists():
+        if not carrito:
             return redirect('ver_carrito')
 
-        subtotal = sum(item.cantidad * item.producto.precio for item in carrito)
+        subtotal = sum(item['cantidad'] * item['producto'].precio for item in carrito)
         iva = subtotal * Decimal('0.16')  # 16% de IVA, ajusta según país
         envio = Decimal('100.00')  # Envío fijo, puedes hacerlo dinámico si gustas
         total = subtotal + iva + envio
 
         orden = Orden.objects.create(
-            usuario=request.user,
+            usuario=request.user if request.user.is_authenticated else None,  # Para no autentificados
             fecha=timezone.now(),
             subtotal=subtotal,
             iva=iva,
@@ -134,16 +158,17 @@ def pago_exitoso(request):
         )
 
         for item in carrito:
-            subtotal = item.producto.precio * item.cantidad  # Calcular subtotal
+            subtotal = item['producto'].precio * item['cantidad']  # Calcular subtotal
             DetalleOrden.objects.create(
                 orden=orden,
-                producto=item.producto.titulo,
-                precio_unitario=item.producto.precio,
-                cantidad=item.cantidad,
+                producto=item['producto'].titulo,
+                precio_unitario=item['producto'].precio,
+                cantidad=item['cantidad'],
                 subtotal=subtotal  # Usar el cálculo aquí
             )
 
-        carrito.delete()
+        if not request.user.is_authenticated:
+            request.session['carrito'] = {}
 
         # Lógica del correo
         if request.POST.get('enviar_correo'):
@@ -154,8 +179,8 @@ def pago_exitoso(request):
 
         return render(request, 'Jewerlythwebapp/pago_exitoso.html', {'orden': orden})
 
-        # Si es GET, mostrar pantalla de simulación
     return render(request, 'Jewerlythwebapp/pago_simulado.html')
+
 
 
 

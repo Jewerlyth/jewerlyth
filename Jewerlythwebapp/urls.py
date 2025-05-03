@@ -7,6 +7,7 @@ urlpatterns = [
     path('', views.home, name="Home"),
     path('carrito', views.carrito, name="Carrito"),
     path('soporte', views.soporte, name="Soporte"),
+    path("chatbot/", views.chatbot_response, name="chatbot_response"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
