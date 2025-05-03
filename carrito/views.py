@@ -88,9 +88,16 @@ def ver_carrito(request):
     if request.user.is_authenticated:
         carrito = Item.objects.filter(user=request.user)
     else:
-        carrito = request.session.get('carrito', [])
-
+        carrito_sesion = request.session.get('carrito', [])
+        carrito = []
+        for item in carrito_sesion:
+            producto = get_object_or_404(ProductoJewe, id=item['producto_id'])
+            carrito.append({
+                'producto': producto,
+                'cantidad': item['cantidad']
+            })
     return render(request, 'Jewerlythwebapp/carrito.html', {'carrito': carrito})
+
 
 
 def enviar_recibo_email(orden, correo):
