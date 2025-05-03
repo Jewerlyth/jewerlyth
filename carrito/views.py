@@ -50,36 +50,40 @@ def agregar_al_carrito(request, producto_id):
     return redirect('ver_carrito')
 
 
-def aumentar_cantidad(request, item_id):
+def aumentar_cantidad(request, producto_id):
     if request.user.is_authenticated:
-        item = get_object_or_404(Item, id=item_id, user=request.user)
+        item = get_object_or_404(Item, user=request.user, producto_id=producto_id)
         item.cantidad += 1
         item.save()
     else:
-        carrito = request.session.get('carrito', {})
-        if item_id in carrito:
-            carrito[item_id]['cantidad'] += 1
-            request.session['carrito'] = carrito
+        carrito = request.session.get('carrito', [])
+        for item in carrito:
+            if item['producto_id'] == producto_id:
+                item['cantidad'] += 1
+                break
+        request.session['carrito'] = carrito
     return redirect('ver_carrito')
 
 
-def disminuir_cantidad(request, item_id):
+
+def disminuir_cantidad(request, producto_id):
     if request.user.is_authenticated:
-        item = get_object_or_404(Item, id=item_id, user=request.user)
+        item = get_object_or_404(Item, user=request.user, producto_id=producto_id)
         if item.cantidad > 1:
             item.cantidad -= 1
             item.save()
         else:
             item.delete()
     else:
-        carrito = request.session.get('carrito', {})
-        if item_id in carrito:
-            if carrito[item_id]['cantidad'] > 1:
-                carrito[item_id]['cantidad'] -= 1
-                request.session['carrito'] = carrito
-            else:
-                del carrito[item_id]
-                request.session['carrito'] = carrito
+        carrito = request.session.get('carrito', [])
+        for i, item in enumerate(carrito):
+            if item['producto_id'] == producto_id:
+                if item['cantidad'] > 1:
+                    item['cantidad'] -= 1
+                else:
+                    carrito.pop(i)
+                break
+        request.session['carrito'] = carrito
     return redirect('ver_carrito')
 
 
