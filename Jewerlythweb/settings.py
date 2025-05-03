@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'whitenoise.runserver_nostatic',
     'Jewerlythwebapp',
     'productos',
     'carrito',
@@ -94,8 +95,8 @@ WSGI_APPLICATION = 'Jewerlythweb.wsgi.application'
 
 
 DATABASES = {
-    'default':  dj_database_url.config(default=os.environ.get('postgresql://jewerlyth_user:y9VwD1QDToQkPdUug90paMSMs2xMDwc8@dpg-d0ar6m6uk2gs73c3j3ag-a.virginia-postgres.render.com/jewerlyth')),
-    #'default': dj_database_url.config(default='postgresql://jewerlyth_user:y9VwD1QDToQkPdUug90paMSMs2xMDwc8@dpg-d0ar6m6uk2gs73c3j3ag-a.virginia-postgres.render.com/jewerlyth'),
+    'default': dj_database_url.config(default='postgresql://jewerlyth_user:y9VwD1QDToQkPdUug90paMSMs2xMDwc8@dpg-d0ar6m6uk2gs73c3j3ag-a.virginia-postgres.render.com/jewerlyth'),
+    #'default':  dj_database_url.config(default=os.environ.get('postgresql://jewerlyth_user:y9VwD1QDToQkPdUug90paMSMs2xMDwc8@dpg-d0ar6m6uk2gs73c3j3ag-a.virginia-postgres.render.com/jewerlyth')),
     #para modificar la base de datos y visualizarlan aqui en django
     'OPTIONS': {
             'client_encoding': 'UTF8',  # Asegúrate de que este parámetro esté presente
@@ -153,4 +154,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'Jewerlythwebapp/static'),
 ]
+
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
