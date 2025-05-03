@@ -7,7 +7,11 @@ from carrito.models import Item  # importa el modelo
 def productos(request):
     productosjewe = ProductoJewe.objects.all()
     categorias = Categoria.objects.all()
-    carrito = Item.objects.filter(user=request.user)
+    if request.user.is_authenticated:
+        carrito = Item.objects.filter(user=request.user)
+    else:
+        carrito = Item.objects.none()  # Si el usuario no está autenticado, no hay carrito
+
     return render(request, "productos/productos.html", {
         "productosjewe": productosjewe,
         "categorias": categorias

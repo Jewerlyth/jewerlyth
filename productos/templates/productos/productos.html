@@ -20,18 +20,22 @@
                   <h6 class="card-subtitle section-heading-upper mb-3 text-muted">{{ productojewe.categoria_prod }}</h6>
                   <p class="card-text section-heading-under">Precio: ${{ productojewe.precio }}</p>
 
-                  {% with carrito|get_item:productojewe.id as item %}
-                    {% if item %}
-                      <p>Cantidad en carrito: {{ item.cantidad }}</p>
-                      <a href="{% url 'aumentar_cantidad' item.id %}" class="btn btn-sm btn-success">+</a>
-                      <a href="{% url 'disminuir_cantidad' item.id %}" class="btn btn-sm btn-danger">-</a>
-                    {% else %}
-                      <form method="POST" action="{% url 'agregar_al_carrito' productojewe.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-warning mt-2">Agregar al carrito</button>
-                      </form>
-                    {% endif %}
-                  {% endwith %}
+                  {% if user.is_authenticated %}
+                    {% with carrito|get_item:productojewe.id as item %}
+                      {% if item %}
+                        <p>Cantidad en carrito: {{ item.cantidad }}</p>
+                        <a href="{% url 'aumentar_cantidad' item.id %}" class="btn btn-sm btn-success">+</a>
+                        <a href="{% url 'disminuir_cantidad' item.id %}" class="btn btn-sm btn-danger">-</a>
+                      {% else %}
+                        <form method="POST" action="{% url 'agregar_al_carrito' productojewe.id %}">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-warning mt-2">Agregar al carrito</button>
+                        </form>
+                      {% endif %}
+                    {% endwith %}
+                  {% else %}
+                    <p><a href="{% url 'login' %}">Inicia sesión</a> para agregar productos al carrito.</p>
+                  {% endif %}
 
                   <p class="card-text"><small class="text-muted">Elegancia y calidad garantizadas</small></p>
                 </div>
