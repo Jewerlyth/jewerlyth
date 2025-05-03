@@ -140,6 +140,7 @@ def pago_simulado(request):
 
 def pago_exitoso(request):
     if request.method == 'POST':
+        # Verificar si el usuario está autenticado
         if request.user.is_authenticated:
             carrito = Item.objects.filter(user=request.user)
         else:
@@ -152,16 +153,19 @@ def pago_exitoso(request):
                 for item in carrito_data
             ]
 
+        # Si no hay productos en el carrito, redirigir al carrito
         if not carrito:
             return redirect('ver_carrito')
 
+        # Calcular subtotal, IVA, envío y total
         subtotal = sum(item['cantidad'] * item['producto'].precio for item in carrito)
-        iva = subtotal * Decimal('0.16')  # 16% de IVA, ajusta según país
-        envio = Decimal('100.00')  # Envío fijo, puedes hacerlo dinámico si gustas
+        iva = subtotal * Decimal('0.16')  # 16% de IVA
+        envio = Decimal('100.00')  # Envío fijo
         total = subtotal + iva + envio
 
+        # Crear la orden, asignando el usuario solo si está autenticado
         orden = Orden.objects.create(
-            usuario=request.user if request.user.is_authenticated else None,  # Para no autentificados
+            usuario=request.user if request.user.is_authenticated else None,  # Si está autenticado, asignar usuario
             fecha=timezone.now(),
             subtotal=subtotal,
             iva=iva,
@@ -169,30 +173,32 @@ def pago_exitoso(request):
             total=total
         )
 
+        # Crear los detalles de la orden
         for item in carrito:
-            subtotal = item['producto'].precio * item['cantidad']  # Calcular subtotal
+            subtotal_item = item['producto'].precio * item['cantidad']  # Calcular el subtotal para cada producto
             DetalleOrden.objects.create(
                 orden=orden,
                 producto=item['producto'].titulo,
                 precio_unitario=item['producto'].precio,
                 cantidad=item['cantidad'],
-                subtotal=subtotal  # Usar el cálculo aquí
+                subtotal=subtotal_item  # Usar el cálculo de subtotal
             )
 
+        # Limpiar el carrito si el usuario no está autenticado
         if not request.user.is_authenticated:
             request.session['carrito'] = {}
 
-        # Lógica del correo
+        # Lógica para enviar el recibo por correo
         if request.POST.get('enviar_correo'):
             correo = request.POST.get('correo')
             if correo:
                 enviar_recibo_email(orden, correo)
-                messages.success(request, '¡Correo de recibo de compra enviado exitosamente!')  # Agregar el mensaje de éxito
+                messages.success(request, '¡Correo de recibo de compra enviado exitosamente!')
 
+        # Mostrar la página de pago exitoso
         return render(request, 'Jewerlythwebapp/pago_exitoso.html', {'orden': orden})
 
+    # Si no es un POST, mostrar una página simulada
     return render(request, 'Jewerlythwebapp/pago_simulado.html')
-
-
 
 
