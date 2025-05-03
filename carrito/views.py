@@ -98,7 +98,8 @@ def ver_carrito(request):
             producto = get_object_or_404(ProductoJewe, id=item['producto_id'])
             carrito.append({
                 'producto': producto,
-                'cantidad': item['cantidad']
+                'cantidad': item['cantidad'],
+                'precio': str(producto.precio)  # str() si es Decimal
             })
     return render(request, 'Jewerlythwebapp/carrito.html', {'carrito': carrito})
 
@@ -142,13 +143,13 @@ def pago_exitoso(request):
         if request.user.is_authenticated:
             carrito = Item.objects.filter(user=request.user)
         else:
-            carrito_data = request.session.get('carrito', {})
+            carrito_data = request.session.get('carrito', [])
             carrito = [
                 {
-                    'producto': Producto.objects.get(id=producto_id),
-                    'cantidad': data['cantidad']
+                    'producto': Producto.objects.get(id=item['producto_id']),
+                    'cantidad': item['cantidad']
                 }
-                for producto_id, data in carrito_data.items()
+                for item in carrito_data
             ]
 
         if not carrito:

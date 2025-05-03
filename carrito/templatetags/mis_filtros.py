@@ -19,12 +19,18 @@ def calc_subtotal(carrito):
     total = Decimal(0)
     for item in carrito:
         try:
-            cantidad = item.cantidad if hasattr(item, 'cantidad') else item.get('cantidad', 0)
-            precio = item.producto.precio if hasattr(item, 'producto') else item.get('precio', 0)
-            total += Decimal(cantidad) * Decimal(precio)
-        except Exception:
+            if hasattr(item, 'producto'):  # usuario autenticado
+                cantidad = Decimal(item.cantidad)
+                precio = Decimal(item.producto.precio)
+            else:  # sesión (no autenticado)
+                cantidad = Decimal(item.get('cantidad', 0))
+                precio = Decimal(item.get('precio', 0))
+            total += cantidad * precio
+        except Exception as e:
+            print(f"Error: {e}")
             continue
     return total
+
 
 @register.filter
 def calc_iva(carrito):
