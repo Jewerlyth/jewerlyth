@@ -88,7 +88,7 @@ def ver_carrito(request):
     if request.user.is_authenticated:
         carrito = Item.objects.filter(user=request.user)
     else:
-        carrito = request.session.get('carrito', {}).values()
+        carrito = request.session.get('carrito', [])
 
     return render(request, 'Jewerlythwebapp/carrito.html', {'carrito': carrito})
 
