@@ -139,7 +139,6 @@ def pago_simulado(request):
 
 
 def pago_exitoso(request):
-    idef pago_exitoso(request):
     if request.method == 'POST':
         # Verificar si el usuario está autenticado
         if request.user.is_authenticated:
