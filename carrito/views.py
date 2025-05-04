@@ -34,6 +34,10 @@ def agregar_al_carrito(request, producto_id):
         # Si el usuario no está autenticado, se guarda el producto en la sesión
         carrito = request.session.get('carrito', [])
 
+        # 💡 Reparar si el carrito fue sobrescrito como dict
+        if not isinstance(carrito, list):
+            carrito = []
+
         # Verificamos si el producto ya está en el carrito
         producto_en_carrito = next((item for item in carrito if item['producto_id'] == producto.id), None)
 
