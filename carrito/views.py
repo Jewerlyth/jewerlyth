@@ -139,12 +139,16 @@ def pago_simulado(request):
 
 
 def pago_exitoso(request):
+    idef pago_exitoso(request):
     if request.method == 'POST':
         # Verificar si el usuario está autenticado
         if request.user.is_authenticated:
             carrito = Item.objects.filter(user=request.user)
         else:
+            # Asegurarse de que sea una lista
             carrito_data = request.session.get('carrito', [])
+            if not isinstance(carrito_data, list):
+                carrito_data = []  # Evita errores si fue mal seteado
             carrito = [
                 {
                     'producto': ProductoJewe.objects.get(id=item['producto_id']),
@@ -165,7 +169,7 @@ def pago_exitoso(request):
 
         # Crear la orden, asignando el usuario solo si está autenticado
         orden = Orden.objects.create(
-            usuario=request.user if request.user.is_authenticated else None,  # Si está autenticado, asignar usuario
+            usuario=request.user if request.user.is_authenticated else None,
             fecha=timezone.now(),
             subtotal=subtotal,
             iva=iva,
@@ -175,18 +179,18 @@ def pago_exitoso(request):
 
         # Crear los detalles de la orden
         for item in carrito:
-            subtotal_item = item['producto'].precio * item['cantidad']  # Calcular el subtotal para cada producto
+            subtotal_item = item['producto'].precio * item['cantidad']
             DetalleOrden.objects.create(
                 orden=orden,
                 producto=item['producto'].titulo,
                 precio_unitario=item['producto'].precio,
                 cantidad=item['cantidad'],
-                subtotal=subtotal_item  # Usar el cálculo de subtotal
+                subtotal=subtotal_item
             )
 
-        # Limpiar el carrito si el usuario no está autenticado
+        # Limpiar el carrito de la sesión correctamente
         if not request.user.is_authenticated:
-            request.session['carrito'] = {}
+            request.session['carrito'] = []  # ✅ Limpiar con lista, no dict
 
         # Lógica para enviar el recibo por correo
         if request.POST.get('enviar_correo'):
@@ -200,5 +204,3 @@ def pago_exitoso(request):
 
     # Si no es un POST, mostrar una página simulada
     return render(request, 'Jewerlythwebapp/pago_simulado.html')
-
-
