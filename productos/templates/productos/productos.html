@@ -4,6 +4,18 @@
 {% load mis_filtros %}
 
 {% block content %}
+{% if messages %}
+  {% for message in messages %}
+    <script>
+      Swal.fire({
+        icon: 'success',
+        title: '{{ message }}',
+        showConfirmButton: false,
+        timer: 2000
+      });
+    </script>
+  {% endfor %}
+{% endif %}
 
 <h2 class="text-white text-center my-4">Catálogo de productos</h2>
 <section class="page-section">

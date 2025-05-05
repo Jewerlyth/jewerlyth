@@ -3,47 +3,105 @@
 {% load static %}
 
 {% block content %}
-   <!-- Heading -->
-   <section class="page-section clearfix">
-      <div class="container">
-        <div class="row align-items-center gx-5">
-          <div class="col-lg-6 text-center mb-4 mb-lg-0">
-            <img class="img-fluid rounded shadow" src="{% static 'Jewerlythwebapp/img/ban.jpeg' %}" alt="Joyería de alta calidad">
-          </div>
-          <div class="col-lg-6">
-            <div class="intro-text bg-white p-5 rounded-4 shadow-lg text-center">
-              <h2 class="section-heading mb-4">
-                <span class="section-heading-upper text-warning">Calidad</span>
-                <span class="section-heading-lower display-5 fw-light texto-negro">La mejor joyería</span>
-              </h2>
-              <p class="lead">💎 "Descubre el brillo que te define con <strong>Jewerlyth</strong>, elegancia en cada detalle." 💎</p>
-              <a href="{% url 'Productos' %}" class="btn btn-warning mt-4 px-4 py-2 rounded-pill shadow-sm">Explorar catálogo</a>
+<!-- Presentación -->
+<section class="page-section py-5 bg-dark text-light">
+  <div class="container">
+    <div class="text-center">
+      <h2 class="section-heading text-uppercase text-warning">Bienvenidos a Jewerlyth</h2>
+      <p class="lead mt-4">En Jewerlyth creemos que cada joya debe tener alma, contar una historia y resaltar lo más valioso: tu esencia.</p>
+      <p class="mt-3">Vendemos piezas únicas con materiales de alta calidad, combinando diseño, elegancia y significado. Ya sea para regalar, celebrar o darte un gusto, aquí encontrarás joyas pensadas para acompañarte en cada momento especial.</p>
+      <p class="mt-3"><em>Porque no solo vendemos joyas, creamos recuerdos que duran para siempre.</em></p>
+      <p class="fw-bold mt-4 text-warning">✨ Descubre el brillo que va contigo.</p>
+    </div>
+  </div>
+</section>
 
-            </div>
-          </div>
+<!-- Heading -->
+<section class="page-section clearfix">
+  <div class="container">
+    <div class="row align-items-center gx-5">
+      <div class="col-lg-6 text-center mb-4 mb-lg-0">
+        <img class="img-fluid rounded shadow" src="{% static 'Jewerlythwebapp/img/ban.jpeg' %}" alt="Joyería de alta calidad">
+      </div>
+      <div class="col-lg-6">
+        <div class="intro-text bg-white p-5 rounded-4 shadow-lg text-center">
+          <h2 class="section-heading mb-4">
+            <span class="section-heading-upper text-warning">Calidad</span>
+            <span class="section-heading-lower display-5 fw-light texto-negro">La mejor joyería</span>
+          </h2>
+          <p class="lead">💎 "Descubre el brillo que te define con <strong>Jewerlyth</strong>, elegancia en cada detalle." 💎</p>
+          <a href="{% url 'Productos' %}" class="btn btn-warning mt-4 px-4 py-2 rounded-pill shadow-sm">Explorar catálogo</a>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
 
 
+<!-- ¿Quiénes somos? -->
+<section class="page-section py-5 bg-dark text-light">
+  <div class="container">
+    <div class="row align-items-center">
 
-    <!-- Message -->
-    <section class="page-section cta">
-      <div class="container">
-        <div class="row">
-          <div class="col-xl-9 mx-auto">
-            <div class="cta-inner text-center rounded">
-              <h2 class="section-heading mb-4">
-                <span class="section-heading-upper">Elegancia y calidad</span>
-                <span class="section-heading-lower">Garantizadas</span>
-              </h2>
-              <p class="mb-0">Con años de experiencia en el mundo de la joyería, en Jewerlyth combinamos tradición y diseño moderno para ofrecerte piezas únicas, entregadas con puntualidad, seguridad y un compromiso total con tu satisfacción.</p>
-            </div>
-          </div>
+
+
+      <!-- Contenido de texto a la derecha -->
+      <div class="col-lg-6 wow fadeInRight" data-wow-duration="1.2s">
+        <div class="bg-black bg-opacity-75 p-4 rounded-4 shadow-lg h-100 d-flex flex-column justify-content-center">
+          <h2 class="section-heading text-uppercase text-warning text-center mb-4">¿Quiénes somos?</h2>
+          <p><strong>En Jewerlyth</strong>, somos una marca apasionada por el <em>diseño, la moda</em> y el brillo que te acompaña todos los días.</p>
+          <p>Nacimos con la idea de que la joyería no tiene que ser frágil ni inaccesible, sino <strong>resistente, elegante y asequible</strong>.</p>
+          <p>Nos especializamos en joyas bañadas en oro: <em>duraderas, hipoalergénicas y hermosas</em>, pensadas para quienes buscan estilo sin complicaciones.</p>
+          <p>Cada pieza está creada para acompañarte en tu día a día, en celebraciones y en momentos que merecen ser recordados.</p>
+          <p>Más que accesorios, nuestras joyas son una conexión con tu esencia: <strong>versátiles, modernas y de alta calidad</strong>.</p>
+          <p class="fw-semibold mt-3 text-warning">Amamos la moda, el diseño funcional y esos pequeños toques que transforman cualquier look.</p>
         </div>
       </div>
-    </section>
 
+      <!-- Imagen a la izquierda ahora -->
+      <div class="col-lg-6 mb-5 mb-lg-0 d-flex justify-content-center wow fadeInLeft" data-wow-duration="1.2s">
+        <img src="{% static 'Jewerlythwebapp/img/ban2.jpeg' %}"
+             alt="Joyería elegante"
+             class="img-fluid rounded-4 shadow img-hover-zoom"
+             style="max-height: 450px; object-fit: cover; transition: transform 0.5s ease;">
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Estilos para animación al pasar el cursor -->
+<style>
+  .img-hover-zoom:hover {
+    transform: scale(1.05);
+  }
+</style>
+
+<!-- WOW.js y Animate.css (asegúrate de incluir estos si no están ya en tu base.html) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+<script>
+  new WOW().init();
+</script>
+
+
+
+<!-- Message -->
+<section class="page-section cta">
+  <div class="container">
+    <div class="row">
+      <div class="col-xl-9 mx-auto">
+        <div class="cta-inner text-center rounded">
+          <h2 class="section-heading mb-4">
+            <span class="section-heading-upper">Elegancia y calidad</span>
+            <span class="section-heading-lower">Garantizadas</span>
+          </h2>
+          <p class="mb-0">Con años de experiencia en el mundo de la joyería, en Jewerlyth combinamos tradición y diseño moderno para ofrecerte piezas únicas, entregadas con puntualidad, seguridad y un compromiso total con tu satisfacción.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 {% endblock %}

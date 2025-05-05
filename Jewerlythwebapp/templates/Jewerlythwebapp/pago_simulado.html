@@ -3,62 +3,93 @@
 {% block content %}
 <div class="container mt-5">
   <div class="card p-4">
-    <h2 class="mb-4">Simulación de Pago</h2>
+    <h2 class="mb-4 text-center">Simulación de Pago</h2>
 
-    <!-- Formulario principal -->
     <form id="pagoForm" method="post" action="{% url 'pago_exitoso' %}">
       {% csrf_token %}
+
+      <!-- Sección: Datos de Tarjeta -->
+      <h5 class="mb-3">Datos de la tarjeta</h5>
       <div class="mb-3">
         <label for="nombre" class="form-label">Nombre en la tarjeta</label>
         <input type="text" class="form-control" id="nombre" name="nombre" required>
       </div>
       <div class="mb-3">
         <label for="numero" class="form-label">Número de tarjeta</label>
-        <input type="text" class="form-control" id="numero" name="numero" placeholder="**** **** **** ****" required>
+        <input type="text" class="form-control" id="numero" name="numero" maxlength="19" placeholder="1234 5678 9012 3456" pattern="\d{4} \d{4} \d{4} \d{4}" inputmode="numeric" required>
       </div>
       <div class="row">
         <div class="col-md-6 mb-3">
           <label for="expira" class="form-label">Fecha de expiración</label>
-          <input type="text" class="form-control" id="expira" name="expira" placeholder="MM/AA" required>
+          <input type="text" class="form-control" id="expira" name="expira" placeholder="MM/AA" maxlength="5" required>
         </div>
         <div class="col-md-6 mb-3">
           <label for="cvv" class="form-label">CVV</label>
-          <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123" required>
+          <input type="password" class="form-control" id="cvv" name="cvv" placeholder="123" maxlength="3" pattern="\d{3}" inputmode="numeric" required>
         </div>
       </div>
 
-      <!-- Botón que abre el modal -->
-      <button type="button" class="btn btn-success btn-lg w-100 mt-3" data-bs-toggle="modal" data-bs-target="#confirmModal">
+      <hr class="my-4">
+
+      <!-- Sección: Datos de Envío -->
+      <h5 class="mb-3">Datos para el envío del paquete</h5>
+      <div class="mb-3">
+        <label for="cliente_nombre" class="form-label">Nombre completo</label>
+        <input type="text" class="form-control" id="cliente_nombre" name="cliente_nombre" required>
+      </div>
+      <div class="mb-3">
+        <label for="direccion" class="form-label">Dirección</label>
+        <input type="text" class="form-control" id="direccion" name="direccion" required>
+      </div>
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label for="ciudad" class="form-label">Ciudad</label>
+          <input type="text" class="form-control" id="ciudad" name="ciudad" required>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="estado" class="form-label">Estado</label>
+          <input type="text" class="form-control" id="estado" name="estado" required>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="cp" class="form-label">Código Postal</label>
+          <input type="text" class="form-control" id="cp" name="cp" pattern="\d{5}" maxlength="5" inputmode="numeric" required>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="telefono" class="form-label">Teléfono</label>
+        <input type="tel" class="form-control" id="telefono" name="telefono" pattern="\d{10}" maxlength="10" inputmode="numeric" required>
+      </div>
+
+      <!-- Botón para abrir el modal -->
+      <button type="button" class="btn btn-success btn-lg w-100 mt-3" onclick="mostrarResumen()">
         Pagar
       </button>
 
-      <!-- Modal de confirmación -->
+      <!-- Modal de Confirmación -->
       <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
           <div class="modal-content">
             <div class="modal-header bg-warning text-dark">
               <h5 class="modal-title" id="confirmModalLabel">¿Confirmar compra?</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-
             <div class="modal-body">
-              <p>¿Deseas proceder con el pago <strong>con tarjeta</strong>?</p>
+              <p>Verifica que los siguientes datos sean correctos antes de confirmar:</p>
 
-              <!-- Checkbox -->
-              <div class="form-check mb-2">
+              <div id="resumenDatos"></div>
+
+              <div class="form-check mt-3">
                 <input class="form-check-input" type="checkbox" id="correoCheckbox" name="enviar_correo" onclick="toggleEmailInput()">
                 <label class="form-check-label" for="correoCheckbox">
                   Deseo recibir el recibo por correo electrónico
                 </label>
               </div>
 
-              <!-- Campo de correo -->
-              <div id="correoInputContainer" style="display: none;">
+              <div id="correoInputContainer" style="display: none;" class="mt-2">
                 <label for="correoInput" class="form-label">Correo electrónico:</label>
                 <input type="email" class="form-control" name="correo" id="correoInput" placeholder="tucorreo@ejemplo.com">
               </div>
             </div>
-
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
               <button type="submit" class="btn btn-warning">Confirmar</button>
@@ -68,13 +99,117 @@
       </div>
     </form>
 
-    <!-- Script para mostrar/ocultar campo de correo -->
+    <!-- Scripts -->
     <script>
       function toggleEmailInput() {
         const checkbox = document.getElementById('correoCheckbox');
         const emailInput = document.getElementById('correoInputContainer');
         emailInput.style.display = checkbox.checked ? 'block' : 'none';
       }
+
+      // Autoformatear expiración
+      document.getElementById("expira").addEventListener("input", function (e) {
+        let input = e.target.value.replace(/\D/g, '').substring(0, 4);
+        if (input.length > 2) {
+          input = input.substring(0, 2) + '/' + input.substring(2);
+        }
+        e.target.value = input;
+      });
+
+      // Formatear número de tarjeta (XXXX XXXX XXXX XXXX)
+      const numeroInput = document.getElementById("numero");
+      numeroInput.addEventListener("input", function () {
+        let input = this.value.replace(/\D/g, '').substring(0, 16);
+        input = input.match(/.{1,4}/g)?.join(' ') || '';
+        this.value = input;
+      });
+
+      // Validación en tiempo real para campos numéricos
+      const validarCampoNumerico = (id, longitud) => {
+        const campo = document.getElementById(id);
+        campo.addEventListener("input", function () {
+          this.value = this.value.replace(/\D/g, '').substring(0, longitud);
+          mostrarError(this);
+        });
+      };
+
+      validarCampoNumerico("cvv", 3);
+      validarCampoNumerico("cp", 5);
+      validarCampoNumerico("telefono", 10);
+
+      // Validación en tiempo real para todos los campos
+      const campos = document.querySelectorAll("#pagoForm input[required]");
+      campos.forEach(campo => {
+        campo.addEventListener("input", function () {
+          mostrarError(this);
+        });
+      });
+
+      function mostrarError(input) {
+        // Elimina cualquier mensaje previo
+        let error = input.nextElementSibling;
+        if (error && error.classList.contains("invalid-feedback")) {
+          error.remove();
+        }
+
+        if (!input.checkValidity()) {
+          const mensaje = document.createElement("div");
+          mensaje.className = "invalid-feedback d-block mt-1";
+          mensaje.textContent = input.validationMessage || "Este campo es inválido.";
+          input.insertAdjacentElement("afterend", mensaje);
+        }
+      }
+
+      function validarFormulario() {
+        let valido = true;
+        campos.forEach(campo => {
+          if (!campo.checkValidity()) {
+            mostrarError(campo);
+            valido = false;
+          }
+        });
+        return valido;
+      }
+
+      function mostrarResumen() {
+        if (!validarFormulario()) {
+          alert("Por favor completa todos los campos correctamente antes de continuar.");
+          return;
+        }
+
+        const datos = {
+          tarjeta: document.getElementById("numero").value.replace(/\d{12}(\d{4})/, "**** **** **** $1"),
+          nombre: document.getElementById("nombre").value,
+          expira: document.getElementById("expira").value,
+          envio_nombre: document.getElementById("cliente_nombre").value,
+          direccion: document.getElementById("direccion").value,
+          ciudad: document.getElementById("ciudad").value,
+          estado: document.getElementById("estado").value,
+          cp: document.getElementById("cp").value,
+          telefono: document.getElementById("telefono").value,
+        };
+
+        const resumenHTML = `
+          <ul class="list-group">
+            <li class="list-group-item"><strong>Nombre en tarjeta:</strong> ${datos.nombre}</li>
+            <li class="list-group-item"><strong>Número de tarjeta:</strong> ${datos.tarjeta}</li>
+            <li class="list-group-item"><strong>Expira:</strong> ${datos.expira}</li>
+            <li class="list-group-item"><strong>Nombre completo:</strong> ${datos.envio_nombre}</li>
+            <li class="list-group-item"><strong>Dirección:</strong> ${datos.direccion}</li>
+            <li class="list-group-item"><strong>Ciudad:</strong> ${datos.ciudad}</li>
+            <li class="list-group-item"><strong>Estado:</strong> ${datos.estado}</li>
+            <li class="list-group-item"><strong>CP:</strong> ${datos.cp}</li>
+            <li class="list-group-item"><strong>Teléfono:</strong> ${datos.telefono}</li>
+          </ul>
+        `;
+
+        document.getElementById("resumenDatos").innerHTML = resumenHTML;
+
+        // Abre el modal manualmente
+        const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+        modal.show();
+      }
+
     </script>
 
   </div>

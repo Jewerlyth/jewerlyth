@@ -24,18 +24,20 @@
           <div class="flex-fill">
             <h5 class="card-title mb-2">{{ item.producto.titulo }}</h5>
             <p class="card-subtitle mb-2 text-muted">Precio unitario: ${{ item.producto.precio }}</p>
+            <form method="post" action="{% url 'eliminar_del_carrito' item.producto.id %}" class="form-eliminar" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm rounded-pill">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                </button>
+            </form>
 
             <div class="d-flex justify-content-between align-items-center mt-3">
               <p class="card-text">Cantidad: {{ item.cantidad }}</p>
               <div class="btn-group" role="group">
-                {% if user.is_authenticated %}
-                  <a href="{% url 'disminuir_cantidad' item.id %}" class="btn btn-outline-danger btn-sm">−</a>
-                  <a href="{% url 'aumentar_cantidad' item.id %}" class="btn btn-outline-success btn-sm">+</a>
-                {% else %}
-                  <a href="{% url 'disminuir_cantidad' item.producto.id %}" class="btn btn-outline-danger btn-sm">−</a>
-                  <a href="{% url 'aumentar_cantidad' item.producto.id %}" class="btn btn-outline-success btn-sm">+</a>
-                {% endif %}
+                <a href="{% url 'disminuir_cantidad' item.producto.id %}" class="btn btn-outline-danger btn-sm">−</a>
+                <a href="{% url 'aumentar_cantidad' item.producto.id %}" class="btn btn-outline-success btn-sm">+</a>
               </div>
+
 
 
               <span class="fw-bold text-dark">Total: ${{ item.cantidad|multiply:item.producto.precio }}</span>
@@ -124,4 +126,67 @@
     </div>
   {% endif %}
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const forms = document.querySelectorAll(".form-eliminar");
+
+    forms.forEach(form => {
+        form.addEventListener("submit", function (e) {
+            e.preventDefault(); // Evita el envío inmediato del formulario
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Este producto se eliminará del carrito.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Envío real del formulario
+                }
+            });
+        });
+    });
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const botones = document.querySelectorAll('.agregar-carrito');
+
+  botones.forEach(boton => {
+    boton.addEventListener('click', function () {
+      const productoId = this.dataset.id;
+
+      fetch(`/agregar-al-carrito/${productoId}/`, {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': getCSRFToken()
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        Swal.fire({
+          icon: 'success',
+          title: data.mensaje,
+          showConfirmButton: false,
+          timer: 1800
+        });
+      });
+    });
+  });
+
+  function getCSRFToken() {
+    const cookie = document.cookie.split(';').find(c => c.trim().startsWith('csrftoken='));
+    return cookie ? cookie.split('=')[1] : '';
+  }
+});
+</script>
+
+
+
 {% endblock %}

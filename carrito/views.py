@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 from decimal import Decimal
 from django.contrib import messages
+from django.views.decorators.http import require_POST
 
 #def agregar_al_carrito(request, producto_id):
  #   producto = get_object_or_404(ProductoJewe, id=producto_id)
@@ -18,7 +19,7 @@ from django.contrib import messages
    #     item.cantidad += 1
    #     item.save()
    # return redirect('ver_carrito')
-
+@require_POST
 def agregar_al_carrito(request, producto_id):
     producto = get_object_or_404(ProductoJewe, id=producto_id)
 
@@ -51,7 +52,9 @@ def agregar_al_carrito(request, producto_id):
         # Guardamos el carrito actualizado en la sesión
         request.session['carrito'] = carrito
 
-    return redirect('ver_carrito')
+    messages.success(request, f"✅ ¡{producto} se ha agregado al carrito!")
+    return redirect(request.META.get('HTTP_REFERER', 'agregar_al_carrito'))
+
 
 
 def aumentar_cantidad(request, producto_id):
@@ -144,14 +147,14 @@ def pago_simulado(request):
 
 def pago_exitoso(request):
     if request.method == 'POST':
-        # Verificar si el usuario está autenticado
+        # Obtener el carrito
         if request.user.is_authenticated:
             carrito = Item.objects.filter(user=request.user)
+            es_objeto = True
         else:
-            # Asegurarse de que sea una lista
             carrito_data = request.session.get('carrito', [])
             if not isinstance(carrito_data, list):
-                carrito_data = []  # Evita errores si fue mal seteado
+                carrito_data = []
             carrito = [
                 {
                     'producto': ProductoJewe.objects.get(id=item['producto_id']),
@@ -159,18 +162,21 @@ def pago_exitoso(request):
                 }
                 for item in carrito_data
             ]
+            es_objeto = False
 
-        # Si no hay productos en el carrito, redirigir al carrito
         if not carrito:
             return redirect('ver_carrito')
 
-        # Calcular subtotal, IVA, envío y total
-        subtotal = sum(item['cantidad'] * item['producto'].precio for item in carrito)
-        iva = subtotal * Decimal('0.16')  # 16% de IVA
-        envio = Decimal('100.00')  # Envío fijo
+        # Calcular totales
+        if es_objeto:
+            subtotal = sum(item.producto.precio * item.cantidad for item in carrito)
+        else:
+            subtotal = sum(item['producto'].precio * item['cantidad'] for item in carrito)
+
+        iva = subtotal * Decimal('0.16')
+        envio = Decimal('100.00')
         total = subtotal + iva + envio
 
-        # Crear la orden, asignando el usuario solo si está autenticado
         orden = Orden.objects.create(
             usuario=request.user if request.user.is_authenticated else None,
             fecha=timezone.now(),
@@ -180,30 +186,46 @@ def pago_exitoso(request):
             total=total
         )
 
-        # Crear los detalles de la orden
+        # Crear detalles de orden
         for item in carrito:
-            subtotal_item = item['producto'].precio * item['cantidad']
+            if es_objeto:
+                producto = item.producto
+                cantidad = item.cantidad
+            else:
+                producto = item['producto']
+                cantidad = item['cantidad']
+
             DetalleOrden.objects.create(
                 orden=orden,
-                producto=item['producto'].titulo,
-                precio_unitario=item['producto'].precio,
-                cantidad=item['cantidad'],
-                subtotal=subtotal_item
+                producto=producto.titulo,
+                precio_unitario=producto.precio,
+                cantidad=cantidad,
+                subtotal=producto.precio * cantidad
             )
 
-        # Limpiar el carrito de la sesión correctamente
+        # Limpiar carrito
         if not request.user.is_authenticated:
-            request.session['carrito'] = []  # ✅ Limpiar con lista, no dict
+            request.session['carrito'] = []
 
-        # Lógica para enviar el recibo por correo
+        # Enviar recibo por correo
         if request.POST.get('enviar_correo'):
             correo = request.POST.get('correo')
             if correo:
                 enviar_recibo_email(orden, correo)
                 messages.success(request, '¡Correo de recibo de compra enviado exitosamente!')
 
-        # Mostrar la página de pago exitoso
         return render(request, 'Jewerlythwebapp/pago_exitoso.html', {'orden': orden})
 
-    # Si no es un POST, mostrar una página simulada
     return render(request, 'Jewerlythwebapp/pago_simulado.html')
+
+def eliminar_del_carrito(request, producto_id):
+    if request.user.is_authenticated:
+        item = Item.objects.filter(user=request.user, producto_id=producto_id).first()
+        if item:
+            item.delete()
+    else:
+        carrito = request.session.get('carrito', [])
+        carrito = [item for item in carrito if item['producto_id'] != producto_id]
+        request.session['carrito'] = carrito
+
+    return redirect('ver_carrito')
