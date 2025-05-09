@@ -14,7 +14,8 @@ def productos(request):
 
     return render(request, "productos/productos.html", {
         "productosjewe": productosjewe,
-        "categorias": categorias
+        "categorias": categorias,
+        "carrito": carrito,
     })
 
 

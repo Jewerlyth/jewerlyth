@@ -27,6 +27,57 @@
   </form>
 </div>
 
+<!-- Toasts grandes y centrados -->
+<div class="position-relative">
+  <!-- Registro -->
+  <div id="registroToast" class="toast bg-success text-white" role="alert" aria-live="assertive" aria-atomic="true"
+       style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+              width: 600px; height: 250px; font-size: 1.5rem; text-align: center; display: none; z-index: 1055;">
+    <div class="toast-header bg-success text-white" style="font-size: 1.25rem;">
+      <strong class="me-auto">✅ Registro Exitoso</strong>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+    </div>
+    <div class="toast-body d-flex align-items-center justify-content-center h-100">
+      ¡Te has registrado correctamente! 🎉
+    </div>
+  </div>
+
+  <!-- Login -->
+  <div id="loginToast" class="toast bg-info text-white" role="alert" aria-live="assertive" aria-atomic="true"
+       style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+              width: 600px; height: 250px; font-size: 1.5rem; text-align: center; display: none; z-index: 1055;">
+    <div class="toast-header bg-info text-white" style="font-size: 1.25rem;">
+      <strong class="me-auto">✅ Inicio de Sesión Exitoso</strong>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+    </div>
+    <div class="toast-body d-flex align-items-center justify-content-center h-100">
+      ¡Has iniciado sesión correctamente! 🎊
+    </div>
+  </div>
+</div>
+
+{% if registro_exitoso %}
+<script>
+  window.onload = function() {
+    const toastEl = document.getElementById('registroToast');
+    toastEl.style.display = 'block';
+    const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+    toast.show();
+  }
+</script>
+{% endif %}
+
+{% if login_exitoso %}
+<script>
+  window.onload = function() {
+    const toastEl = document.getElementById('loginToast');
+    toastEl.style.display = 'block';
+    const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+    toast.show();
+  }
+</script>
+{% endif %}
+
 <script>
   function mostrarFormulario(formulario) {
     if (formulario === 'registro') {
@@ -39,5 +90,10 @@
   }
 </script>
 
-{% endblock %}
+{% if mensaje_login %}
+<div style="background-color: #f8d7da; color: #721c24; border-radius: 10px; padding: 10px; text-align: center; margin-top: 15px;">
+  {{ mensaje_login }}
+</div>
+{% endif %}
 
+{% endblock %}

@@ -113,106 +113,93 @@
 
 </div>
     <script>
-        // Alternar visibilidad del chat al hacer clic en el botón
-        document.getElementById('chat-toggle').addEventListener('click', function () {
-            const chat = document.getElementById('chat-container');
-            if (chat.style.display === 'none' || chat.style.display === '') {
-                chat.style.display = 'flex';
-            } else {
-                chat.style.display = 'none';
-            }
+    // Alternar visibilidad del chat al hacer clic en el botón
+    document.getElementById('chat-toggle').addEventListener('click', function () {
+        const chat = document.getElementById('chat-container');
+        if (chat.style.display === 'none' || chat.style.display === '') {
+            chat.style.display = 'flex';
+        } else {
+            chat.style.display = 'none';
+        }
+    });
+
+    function sendMessage(message) {
+        const chatbox = document.getElementById("chatbox");
+
+        const userMsg = document.createElement("div");
+        userMsg.className = "message user-message";
+        userMsg.textContent = message;
+        chatbox.appendChild(userMsg);
+
+        fetch("/chatbot/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: message })
+        })
+        .then(res => res.json())
+        .then(data => {
+            const botMsg = document.createElement("div");
+            botMsg.className = "message bot-message";
+            botMsg.textContent = data.response;
+            chatbox.appendChild(botMsg);
+            chatbox.scrollTop = chatbox.scrollHeight;
         });
+    }
 
-        function sendMessage(message) {
-            const chatbox = document.getElementById("chatbox");
-
-            const userMsg = document.createElement("div");
-            userMsg.className = "message user-message";
-            userMsg.textContent = message;
-            chatbox.appendChild(userMsg);
-
-            fetch("/chatbot/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: message })
-            })
-            .then(res => res.json())
-            .then(data => {
-                const botMsg = document.createElement("div");
-                botMsg.className = "message bot-message";
-                botMsg.textContent = data.response;
-                chatbox.appendChild(botMsg);
-                chatbox.scrollTop = chatbox.scrollHeight;
-            });
+    // Mostrar popup principal
+    function mostrarPopup() {
+        const popup = document.getElementById("popup-anuncio-full");
+        if (popup.style.display !== "flex") {
+            popup.style.display = "flex";
         }
+    }
 
-        // Mostrar popup cada 8 minutos, iniciando a los 10 segundos
-        function mostrarPopup() {
-            const popup = document.getElementById("popup-anuncio-full");
-            if (popup.style.display !== "flex") {
-                popup.style.display = "flex";
-            }
-        }
+    function cerrarPopup() {
+        document.getElementById("popup-anuncio-full").style.display = "none";
+    }
 
-        function cerrarPopup() {
-            document.getElementById("popup-anuncio-full").style.display = "none";
-        }
+    // Mostrar banners emergentes
+    function mostrarBanners() {
+        const banners = document.getElementById("banners");
+        banners.style.display = "flex";
+        setTimeout(() => {
+            banners.style.display = "none";
+        }, 10000); // visibles por 10 segundos
+    }
 
-        // Mostrar popup y banners después de ciertos tiempos
-        window.addEventListener("load", function () {
-            setTimeout(() => {
-                mostrarPopup(); // Mostrar popup después de 10 segundos
-            }, 10000);
+    // Mostrar y ocultar slider
+    function mostrarSlider() {
+        const slider = document.getElementById("slider-announcement");
+        slider.classList.add("show");
+    }
 
-            setInterval(() => {
-                mostrarPopup(); // Mostrar popup cada 8 minutos
-            }, 480000);
+    function cerrarSlider() {
+        const slider = document.getElementById("slider-announcement");
+        slider.classList.remove("show");
+    }
 
-            // Mostrar banners
-            setTimeout(() => {
-                mostrarBanners(); // Mostrar banners después de 10 segundos
-            }, 10000);
+    // Evento principal: configurar tiempos de aparición
+    window.addEventListener("load", function () {
+        // Popup: aparece a los 10 segundos y luego cada 8 minutos
+        setTimeout(mostrarPopup, 10000);
+        setInterval(mostrarPopup, 480000);
 
-            setInterval(() => {
-                mostrarBanners(); // Mostrar banners cada 2 minutos
-            }, 120000);
-        });
+        // Banners: aparece a los 15 segundos y luego cada 2 minutos con 2 segundos
+        setTimeout(mostrarBanners, 15000);
+        setInterval(mostrarBanners, 122000);
 
-        function mostrarBanners() {
-            const banners = document.getElementById("banners");
-            banners.style.display = "flex";
-            setTimeout(() => {
-                banners.style.display = "none";
-            }, 10000);
-        }
+        // Slider: aparece a los 20 segundos, desaparece a los 30, luego reaparece cada 2 min 5 seg
+        setTimeout(() => {
+            mostrarSlider();
+            setTimeout(cerrarSlider, 10000); // cerrarlo después de 10s
+        }, 20000);
+        setInterval(() => {
+            mostrarSlider();
+            setTimeout(cerrarSlider, 10000);
+        }, 125000);
+    });
+</script>
 
-        function mostrarSlider() {
-            const slider = document.getElementById("slider-announcement");
-            slider.classList.add("show");
-        }
-
-        function cerrarSlider() {
-            const slider = document.getElementById("slider-announcement");
-            slider.classList.remove("show");
-        }
-
-        window.addEventListener("load", function () {
-            setTimeout(() => {
-                mostrarSlider();
-            }, 10000);
-
-            setTimeout(() => {
-                cerrarSlider();
-            }, 20000);
-
-            setInterval(() => {
-                mostrarSlider();
-                setTimeout(() => {
-                    cerrarSlider();
-                }, 10000);
-            }, 120000);
-        });
-    </script>
 
 
 
