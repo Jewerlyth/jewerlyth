@@ -22,5 +22,6 @@ urlpatterns = [
     path('', include('Jewerlythwebapp.urls')),
     path('productos/', include('productos.urls')),
     path('carrito/', include('carrito.urls')),
+    path('clientes/', include('clientes.urls')),
 
 ]

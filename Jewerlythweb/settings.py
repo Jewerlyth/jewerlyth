@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'Jewerlythwebapp',
     'productos',
     'carrito',
+    'clientes',
 ]
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # o tu proveedor

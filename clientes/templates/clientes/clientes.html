@@ -1,0 +1,43 @@
+{% extends "Jewerlythwebapp/base.html" %}
+
+{% block content %}
+
+<div style="text-align: center; margin-bottom: 20px;">
+  <button onclick="mostrarFormulario('registro')" class="btn btn-primary">Registro</button>
+  <button onclick="mostrarFormulario('login')" class="btn btn-secondary">Iniciar Sesión</button>
+</div>
+
+<!-- Formulario de Registro -->
+<div id="formularioRegistro" style="display: block;" class="contenedorRegistro">
+  <h3 style="color: white; text-align: center;"><b>Registro</b></h3>
+  <form method="POST" style="text-align: center;">
+    {% csrf_token %}
+    <table style="color: white; margin: 20px auto;">{{ miFormulario.as_table }}</table>
+    <input type="submit" value="Registrarse" style="width: 150px;">
+  </form>
+</div>
+
+<!-- Formulario de Login -->
+<div id="formularioLogin" style="display: none;" class="contenedorRegistro">
+  <h3 style="color: white; text-align: center;"><b>Iniciar Sesión</b></h3>
+  <form method="POST" style="text-align: center;">
+    {% csrf_token %}
+    <table style="color: white; margin: 20px auto;">{{ miFormularioLogin.as_table }}</table>
+    <input type="submit" value="Ingresar" style="width: 150px;">
+  </form>
+</div>
+
+<script>
+  function mostrarFormulario(formulario) {
+    if (formulario === 'registro') {
+      document.getElementById('formularioRegistro').style.display = 'block';
+      document.getElementById('formularioLogin').style.display = 'none';
+    } else {
+      document.getElementById('formularioRegistro').style.display = 'none';
+      document.getElementById('formularioLogin').style.display = 'block';
+    }
+  }
+</script>
+
+{% endblock %}
+
