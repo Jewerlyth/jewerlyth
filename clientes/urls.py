@@ -3,6 +3,8 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-urlpatterns=[
-    path('',views.clientes, name="Clientes"),
+urlpatterns = [
+    path('', views.home, name='Home'),  # Página de inicio
+    path('clientes/', views.clientes, name='Clientes'),  # Página de formulario de clientes
 ]
+

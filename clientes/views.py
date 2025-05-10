@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from .forms import FormularioRegistro, FormularioLogin
 from .models import Cliente
 from django.contrib.auth.hashers import make_password, check_password
+from django.contrib import messages
+
 
 def clientes(request):
     registro_exitoso = False
@@ -26,7 +28,9 @@ def clientes(request):
                 try:
                     cliente = Cliente.objects.get(email=email)
                     if check_password(password, cliente.contrasena):
-                        login_exitoso = True
+                        messages.success(request, f"Inicio de sesión exitoso. ¡Bienvenido {cliente.nombres}!")
+                        return redirect('Home')
+
                     else:
                         mensaje_login = "Contraseña incorrecta"
                 except Cliente.DoesNotExist:
@@ -46,3 +50,9 @@ def clientes(request):
             'mensaje_login': mensaje_login
         }
     )
+from django.shortcuts import render
+
+def home(request):
+    # Aquí puedes renderizar la página de inicio
+    return render(request, 'Jewerlythwebapp/home.html')
+

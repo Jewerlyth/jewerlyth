@@ -70,3 +70,5 @@ def chatbot_response(request):
         user_text = data.get("message", "")
         response = get_response(user_text)
         return JsonResponse({"response": response})
+def home(request):
+    return render(request, 'Jewerlythwebapp/home.html')

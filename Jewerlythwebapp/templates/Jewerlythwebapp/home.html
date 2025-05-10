@@ -4,6 +4,27 @@
 
 {% block content %}
 <!-- Presentación -->
+{% if messages %}
+  <div id="alert-container">
+    {% for message in messages %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+<script>
+  // Espera 3 segundos y luego oculta el mensaje
+  setTimeout(function() {
+    const alertContainer = document.getElementById('alert-container');
+    if (alertContainer) {
+      alertContainer.style.display = 'none';
+    }
+  }, 3000); // 3000 milisegundos = 3 segundos
+</script>
+
+
+
 <section class="page-section py-5 bg-dark text-light">
   <div class="container">
     <div class="text-center">
