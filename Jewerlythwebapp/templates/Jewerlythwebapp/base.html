@@ -57,6 +57,19 @@
           <a class="nav-link text-uppercase text-expanded" href="{% url 'Clientes' %}">Clientes</a>
         </li>
 
+{% if request.session.email %}
+<div style="position: absolute; top: 10px; right: 20px;">
+  <div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+      Mi cuenta
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <li><span class="dropdown-item-text">Bienvenido {{ request.session.nombre }}</span></li>
+      <li><a class="dropdown-item" href="{% url 'logout' %}">Cerrar sesión</a></li>
+    </ul>
+  </div>
+</div>
+{% endif %}
 
 
       </ul>

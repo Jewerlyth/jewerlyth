@@ -28,6 +28,8 @@ def clientes(request):
                 try:
                     cliente = Cliente.objects.get(email=email)
                     if check_password(password, cliente.contrasena):
+                        request.session['email'] = cliente.email
+                        request.session['nombre'] = cliente.nombres
                         messages.success(request, f"Inicio de sesión exitoso. ¡Bienvenido {cliente.nombres}!")
                         return redirect('Home')
 
@@ -55,4 +57,10 @@ from django.shortcuts import render
 def home(request):
     # Aquí puedes renderizar la página de inicio
     return render(request, 'Jewerlythwebapp/home.html')
+
+
+def logout_view(request):
+    request.session.flush()  # Borra los datos de sesión
+    messages.success(request, "Sesión cerrada exitosamente.")
+    return redirect('Home')
 
