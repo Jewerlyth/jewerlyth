@@ -2,18 +2,17 @@ from django.db import models
 from productos.models import ProductoJewe
 from django.contrib.auth.models import User
 
-# Create your models here.
 class Item(models.Model):
-    producto = models.ForeignKey(ProductoJewe, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    cantidad = models.PositiveIntegerField(default=1)
-    added = models.DateTimeField(auto_now_add=True)
+    producto = models.ForeignKey(ProductoJewe, on_delete=models.CASCADE)  # Producto añadido al carrito
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Relacionamos el carrito con un usuario
+    cantidad = models.PositiveIntegerField(default=1)  # Cantidad del producto
+    added = models.DateTimeField(auto_now_add=True)  # Fecha en que se añadió el producto
 
     def __str__(self):
         return f"{self.producto.titulo} x {self.cantidad}"
 
 class Orden(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # Usuario asociado
     fecha = models.DateTimeField(auto_now_add=True)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     iva = models.DecimalField(max_digits=10, decimal_places=2, default=0)
