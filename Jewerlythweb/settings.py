@@ -94,16 +94,10 @@ WSGI_APPLICATION = 'Jewerlythweb.wsgi.application'
 
 
 
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'registroclientes',
-        'USER': 'postgres',
-        'PASSWORD': '18112003',
-        'HOST': 'localhost',
-        'PORT': 5432,
-    }
+    'default': dj_database_url.config(
+        default='postgresql://jewerlyth_user:y9VwD1QDToQkPdUug90paMSMs2xMDwc8@dpg-d0ar6m6uk2gs73c3j3ag-a.virginia-postgres.render.com/jewerlyth'
+    )
 }
 
 # Opcional: si quieres añadir opciones específicas
