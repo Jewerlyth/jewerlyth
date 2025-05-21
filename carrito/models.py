@@ -1,6 +1,7 @@
 from django.db import models
 from productos.models import ProductoJewe
 from django.contrib.auth.models import User
+from decimal import Decimal
 
 class Item(models.Model):
     producto = models.ForeignKey(ProductoJewe, on_delete=models.CASCADE)  # Producto añadido al carrito
@@ -20,7 +21,10 @@ class Orden(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"Orden #{self.id} - {self.usuario.username}"
+        if self.usuario:
+            return f"Orden #{self.id} - {self.usuario.username}"
+        return f"Orden #{self.id} - Usuario anónimo"
+
 
 class DetalleOrden(models.Model):
     orden = models.ForeignKey(Orden, related_name='detalles', on_delete=models.CASCADE)
@@ -31,5 +35,8 @@ class DetalleOrden(models.Model):
     envio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     cantidad = models.IntegerField()
 
+    def __str__(self):
+        return f"{self.producto} x {self.cantidad} (Orden #{self.orden.id})"
+
     def calcular_subtotal(self):
-        return self.precio_unitario * self.cantidad
+        return Decimal(self.precio_unitario) * self.cantidad
